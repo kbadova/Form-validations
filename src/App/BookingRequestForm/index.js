@@ -176,7 +176,7 @@ class BookingRequestForm extends React.Component {
   handleSubmit = () => {
     const {
       form: {
-        fields: {name, email, start, end, roomType}
+        fields: {name, email, start, end, roomType, phone}
       }
     } = this.state;
 
@@ -186,7 +186,8 @@ class BookingRequestForm extends React.Component {
       email: email.value,
       start: start.value,
       end: end.value,
-      roomType: roomType.value
+      roomType: roomType.value,
+      phone: phone.value
     };
 
     axios
@@ -246,6 +247,18 @@ class BookingRequestForm extends React.Component {
     });
   };
 
+  checkPhoneNumberIsTaken = phone => {
+    const url = 'http://localhost:8000/booking/check-phone/';
+    axios
+      .post(url, {phone})
+      .then(() => {
+        this.updateState('form.fields.phone.errors', []);
+      })
+      .catch(errors => {
+        this.updateState('form.fields.phone.errors', errors.response.data);
+      });
+  };
+
   handlePhoneChange = event => {
     this.updateState('form.fields.phone.value', event.target.value);
   };
@@ -255,7 +268,7 @@ class BookingRequestForm extends React.Component {
       errorMessage,
       successMessage,
       form: {
-        fields: {name, email, start, end}
+        fields: {name, email, start, end, phone}
       },
       roomTypes,
       meals

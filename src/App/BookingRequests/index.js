@@ -61,20 +61,24 @@ class BookingRequests extends React.Component {
         <div>
           <p>Booking requests</p>
           <table>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Start</th>
-              <th>End</th>
-            </tr>
-            {bookingRequests.map(request => (
-              <tr key={request.id}>
-                <td>{request.name}</td>
-                <td>{request.email}</td>
-                <td>{request.start}</td>
-                <td>{request.end}</td>
+            <tbody>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Start</th>
+                <th>End</th>
               </tr>
-            ))}
+              {bookingRequests.map(request => (
+                <tr key={request.id}>
+                  <td>{request.name}</td>
+                  <td>{request.email}</td>
+                  <td>{request.phone}</td>
+                  <td>{request.start}</td>
+                  <td>{request.end}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>

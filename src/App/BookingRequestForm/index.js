@@ -31,6 +31,10 @@ class BookingRequestForm extends React.Component {
       roomType: {
         value: '',
         errors: []
+      },
+      meal: {
+        value: '',
+        errors: []
       }
     };
     this.state = {
@@ -41,7 +45,8 @@ class BookingRequestForm extends React.Component {
       },
       roomTypes: [],
       errorMessage: '',
-      successMessage: ''
+      successMessage: '',
+      meals: []
     };
   }
 
@@ -51,6 +56,13 @@ class BookingRequestForm extends React.Component {
       const roomTypes = response.data;
 
       this.setState({roomTypes});
+    });
+
+    const mealsUrl = 'http://localhost:8000/booking/meals/';
+    axios.get(mealsUrl).then(response => {
+      const meals = response.data;
+
+      this.setState({meals});
     });
   }
 
@@ -210,6 +222,23 @@ class BookingRequestForm extends React.Component {
     });
   };
 
+  handleMealsChange = event => {
+    const value = event.target.value;
+    const {form} = this.state;
+    this.setState({
+      form: {
+        ...form,
+        fields: {
+          ...form.fields,
+          meal: {
+            ...form.fields.meal,
+            value: value
+          }
+        }
+      }
+    });
+  };
+
   render() {
     const {
       errorMessage,
@@ -217,7 +246,8 @@ class BookingRequestForm extends React.Component {
       form: {
         fields: {name, email, start, end}
       },
-      roomTypes
+      roomTypes,
+      meals
     } = this.state;
 
     return (
@@ -264,6 +294,12 @@ class BookingRequestForm extends React.Component {
             label="Room Type"
             onChange={this.handleRoomTypeChange}
             options={roomTypes}
+          />
+
+          <SelectField
+            label="Meals"
+            onChange={this.handleMealsChange}
+            options={meals}
           />
 
           <button type="button" onClick={this.handleSubmit}>

@@ -35,6 +35,10 @@ class BookingRequestForm extends React.Component {
       meal: {
         value: '',
         errors: []
+      },
+      phone: {
+        value: '',
+        errors: []
       }
     };
     this.state = {
@@ -65,6 +69,24 @@ class BookingRequestForm extends React.Component {
       this.setState({meals});
     });
   }
+
+  updateState = (path, value) => {
+    const newState = _.cloneDeep(this.state);
+    const stateWithChangedField = _.set(newState, path, value);
+
+    this.setState(stateWithChangedField);
+  };
+
+  getFieldValue = path => _.get(this.state, path);
+
+  setFieldErrors = responseData => {
+    let form = _.cloneDeep(this.state.form);
+    _.forEach(responseData, (value, key) => {
+      _.set(form, `fields.${key}.errors`, value);
+    });
+
+    this.setState({form});
+  };
 
   handleNameChange = event => {
     const nameValue = event.target.value;
@@ -99,21 +121,6 @@ class BookingRequestForm extends React.Component {
       }
     });
   };
-
-  // handleEmailChange = event => {
-  //   const url = 'http://localhost:8000/booking/email-exist/';
-  //   const data = {email: event.target.value};
-  //   axios
-  //     .post(url, data)
-  //     .then(response => {
-  //       const message = response.data.message;
-  //       this.setState({successMessage: message, errorMessage: ''});
-  //     })
-  //     .catch(error => {
-  //       const errorMessage = error.response.data.error;
-  //       this.setState({errorMessage, successMessage: ''});
-  //     });
-  // };
 
   handleStartChange = event => {
     const startValue = event.target.value;
@@ -239,6 +246,10 @@ class BookingRequestForm extends React.Component {
     });
   };
 
+  handlePhoneChange = event => {
+    this.updateState('form.fields.phone.value', event.target.value);
+  };
+
   render() {
     const {
       errorMessage,
@@ -300,6 +311,14 @@ class BookingRequestForm extends React.Component {
             label="Meals"
             onChange={this.handleMealsChange}
             options={meals}
+          />
+
+          <InputField
+            type="text"
+            label="Phone number"
+            value={phone.value}
+            onChange={this.handlePhoneChange}
+            errors={phone.errors}
           />
 
           <button type="button" onClick={this.handleSubmit}>

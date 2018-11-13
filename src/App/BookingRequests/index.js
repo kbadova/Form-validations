@@ -31,12 +31,18 @@ class BookingRequests extends React.Component {
 
   filterBookingRequestsByDate = event => {
     const end = event.target.value;
-
+    const start = this.state.start;
     axios
-      .get(`http://localhost:8000/booking/booking-requests/?end=${end}&&start=`)
+      .get(
+        `http://localhost:8000/booking/booking-requests/?end=${end}&&start=${start}`
+      )
       .then(response => {
         this.setState({bookingRequests: response.data});
       });
+  };
+
+  updateStart = event => {
+    this.setState({start: event.target.value});
   };
 
   render() {
@@ -53,7 +59,7 @@ class BookingRequests extends React.Component {
 
         <div>
           <label>start</label>
-          <input type="date" />
+          <input type="date" onChange={this.updateStart} />
 
           <label>end</label>
           <input type="date" onChange={this.filterBookingRequestsByDate} />

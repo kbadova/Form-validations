@@ -11,40 +11,37 @@ class BookingRequestForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.initialFields = {
-      name: {
-        value: '',
-        errors: []
-      },
-      email: {
-        value: '',
-        errors: []
-      },
-      start: {
-        value: '',
-        errors: []
-      },
-      end: {
-        value: '',
-        errors: []
-      },
-      roomType: {
-        value: '',
-        errors: []
-      },
-      meal: {
-        value: '',
-        errors: []
-      },
-      phone: {
-        value: '',
-        errors: []
-      }
-    };
     this.state = {
       form: {
         fields: {
-          ...this.initialFields
+          name: {
+            value: '',
+            errors: []
+          },
+          email: {
+            value: '',
+            errors: []
+          },
+          start: {
+            value: '',
+            errors: []
+          },
+          end: {
+            value: '',
+            errors: []
+          },
+          roomType: {
+            value: '',
+            errors: []
+          },
+          meal: {
+            value: '',
+            errors: []
+          },
+          phone: {
+            value: '',
+            errors: []
+          }
         }
       },
       roomTypes: [],
@@ -67,6 +64,7 @@ class BookingRequestForm extends React.Component {
       const meals = response.data;
 
       this.setState({meals});
+      this.updateState('form.fields.meal.value', meals[0]);
     });
   }
 
@@ -120,6 +118,10 @@ class BookingRequestForm extends React.Component {
     const roomTypeValue = event.target.value;
 
     this.updateState('form.fields.roomType.value', roomTypeValue);
+
+    if (roomTypeValue === '3') {
+      this.updateState('form.fields.meal.value', 2);
+    }
   };
 
   handleSubmit = () => {
@@ -165,6 +167,30 @@ class BookingRequestForm extends React.Component {
     const phoneValue = event.target.value;
 
     this.updateState('form.fields.phone.value', phoneValue);
+  };
+
+  validatePhone = phone => {
+    return {
+      valid: phone.match(/^\d{3}-\d{3}-\d{4}$/),
+      message: 'Enter a valid phone'
+    };
+  };
+
+  updateSyncErrors = (name, errors) => {
+    this.updateState(`form.fields.${name}.errors`, errors);
+  };
+
+  validatePhoneOnBE = event => {
+    const phone = event.target.value;
+    const url = 'http://localhost:8000/booking/check-phone/';
+    axios
+      .post(url, {phone})
+      .then(response => {
+        console.log(response);
+      })
+      .catch(errors => {
+        this.updateState('form.fields.phone.errors', errors.response.data);
+      });
   };
 
   render() {
@@ -228,6 +254,7 @@ class BookingRequestForm extends React.Component {
             label="Meals"
             onChange={this.handleMealsChange}
             options={meals}
+            value={this.getFieldValue('form.fields.meal.value')}
           />
 
           <InputField
@@ -235,7 +262,11 @@ class BookingRequestForm extends React.Component {
             label="Phone number"
             value={phone.value}
             onChange={this.handlePhoneChange}
+            onBlur={this.validatePhoneOnBE}
             errors={phone.errors}
+            validators={[this.validatePhone]}
+            updateSyncErrors={this.updateSyncErrors}
+            name="phone"
           />
 
           <button type="button" onClick={this.handleSubmit}>
